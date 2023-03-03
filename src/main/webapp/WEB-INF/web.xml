@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd" id="WebApp_ID" version="4.0">
+	<context-param> <!-- 등록한 정보는 톰캣 서버 기동 시 생성되어 서버가 종료될 때까지 계속 기억함 -->
+		<param-name>log4jConfigLocation</param-name>
+		<param-value>/WEB-INF/classes/log4.properties</param-value>
+	</context-param>	
+	<servlet>
+		<servlet-name>FrontController1</servlet-name>
+		<servlet-class>com.pojo.step1.FrontMVC11</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>FrontController1</servlet-name>
+		<!-- *.st1 ; 어떤 요청 이름이 오든 확장자가 st1으로 끝나면 FrontMVC1 서블릿이 인터셉트 -->
+		<url-pattern>*.st1</url-pattern>
+	</servlet-mapping>
+</web-app>

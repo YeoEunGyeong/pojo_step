@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mybatis.mapper.BoardMapper">
+   <select id="getBoardList" parameterType="java.util.HashMap" resultType="map">
+	SELECT
+	       bm.bm_no,
+	       bm.bm_title,
+	       bm.bm_writer,
+	       bs.bs_file,
+	       bm.bm_hit,
+	       bm.bm_group,
+	       bm.bm_pos,
+	       bm.bm_step
+	  FROM board_master_t bm, board_sub_t bs
+	 WHERE bm.bm_no = bs.bm_no(+)
+	<if test= 'bm_no > 0'>
+	   AND bm_no = #{bm_no}
+	</if>
+	<if test= 'cb_search != null and cb_search.equals("bm_title")'> <!-- 제목으로 비교 -->
+	   AND bm_title LIKE '%||#{keyword}||%'
+	</if>
+	<if test= 'cb_search != null and cb_search.equals("bm_content")'>
+	   AND bm_content LIKE '%||#{keyword}||%'
+	</if>
+	<if test= 'cb_search != null and cb_search.equals("bm_writer")'>
+	   AND bm_writer LIKE '%||#{keyword}||%'
+	</if>
+	 ORDER BY bm.bm_group desc, bm.bm_step asc
+   </select>
+   <insert id = "boardMInsert" parameterType = "map">
+   		INSERT INTO board_master_t(bm_no,
+							       bm_title,
+							       bm_writer,
+							       bs_file,
+							       bm_hit,
+							       bm_group,
+							       bm_pos,
+							       bm_step)
+		VALUES (seq_board_no.nextval, 
+				#{bm_title}, 
+				#{bm_writer}, 
+				to_char(sysdate, 'YYYY-MM-DD'),
+				0, 
+				#{bm_group}, 
+				#{bm_pos}, 
+				#{bm_step})
+   </insert>
+   <insert id = "boardSInster" parameterType = "map">
+   		INSERT INTO board_sub_t(bm_no,
+   								bs_seq,
+   								bs_file,
+   								bs_size)
+		VALUES (#{bm_no}, 
+				1, 
+				#{bs_file}, 
+				#{bs_size})
+   </insert>
+   <update id = "bmStepUpdate" parameterType = "map">
+	   UPDATE board_master_t
+		  SET bm_step = bm_step + 1
+		WHERE bm_group = #{bm_group}
+		  AND bm_step > #{bm_step}
+   </update>        
+</mapper>
